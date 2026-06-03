@@ -4,6 +4,8 @@ export default function LoginForm({ onSubmit }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
+  const [serverError, setServerError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validate = () => {
     const tempErrors = {}
@@ -21,10 +23,19 @@ export default function LoginForm({ onSubmit }) {
     return Object.keys(tempErrors).length === 0
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    if (validate()) {
-      onSubmit({ email, password })
+    if (!validate()) return
+
+    setIsSubmitting(true)
+    setServerError('')
+
+    try {
+      await onSubmit({ email, password })
+    } catch (error) {
+      setServerError(error?.message || 'Server error')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -58,7 +69,13 @@ export default function LoginForm({ onSubmit }) {
         )}
       </div>
 
-      <button type="submit" style={{ padding: '8px 16px', cursor: 'pointer' }}>
+      {serverError && (
+        <div role="alert" style={{ color: 'red', marginBottom: 12 }}>
+          {serverError}
+        </div>
+      )}
+
+      <button type="submit" disabled={isSubmitting} style={{ padding: '8px 16px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
         Iniciar Sesión
       </button>
     </form>
