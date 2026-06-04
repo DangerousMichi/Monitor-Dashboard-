@@ -19,7 +19,7 @@ export default function Dashboard() {
       {hasAlerts && (
         <div style={{
           background: '#fff3cd',
-          border: '1px solid #ffc107',
+          border: '1px solid #ffebb0',
           borderRadius: 6,
           padding: '8px 12px',
           marginBottom: 16,
